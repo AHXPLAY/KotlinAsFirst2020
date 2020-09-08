@@ -53,8 +53,7 @@ fun quadraticRootProduct(a: Double, b: Double, c: Double): Double {
  * Пример главной функции
  */
 fun main() {
-    val x1x2 = quadraticRootProduct(1.0, 13.0, 42.0)
-    println("Root product: $x1x2")
+
 }
 
 /**
@@ -65,8 +64,9 @@ fun main() {
  * Пользователь задает время в часах, минутах и секундах, например, 8:20:35.
  * Рассчитать время в секундах, прошедшее с начала суток (30035 в данном случае).
  */
-fun seconds(hours: Int, minutes: Int, seconds: Int): Int = TODO()
-
+fun seconds(hours: Int, minutes: Int, seconds: Int): Int{
+    return hours * 3600 + minutes * 60 + seconds
+}
 /**
  * Тривиальная (1 балл)
  *
@@ -98,7 +98,9 @@ fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double = TODO()
  * Пользователь задает целое число, большее 100 (например, 3801).
  * Определить третью цифру справа в этом числе (в данном случае 8).
  */
-fun thirdDigit(number: Int): Int = TODO()
+fun thirdDigit(number: Int): Int {
+    return number / 100 % 10
+}
 
 /**
  * Простая (2 балла)
@@ -116,12 +118,23 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Сколько денег будет на счету через 3 года (с учётом сложных процентов)?
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
-fun accountInThreeYears(initial: Int, percent: Int): Double = TODO()
-
+fun accountInThreeYears(initial: Int, percent: Int): Double {
+    val k = 1 + percent.toDouble() / 100
+    return initial * k.pow(3)
+}
 /**
  * Простая (2 балла)
  *
  * Пользователь задает целое трехзначное число (например, 478).
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-fun numberRevert(number: Int): Int = TODO()
+fun numberRevert(number: Int): Int {
+    var s = 0
+    var num = number
+    while(num > 0){
+        s *= 10
+        s += num % 10
+        num /= 10
+    }
+    return s
+}
