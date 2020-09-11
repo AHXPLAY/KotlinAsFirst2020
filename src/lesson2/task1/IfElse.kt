@@ -3,7 +3,9 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
@@ -112,7 +114,16 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = TODO()
+): Int {
+    val rookThreat = (kingX == rookX) || (kingY == rookY)
+    val bishopThreat = abs(kingX - bishopX) == abs(kingY - bishopY)
+    return when{
+        rookThreat && bishopThreat -> 3
+        rookThreat -> 1
+        bishopThreat -> 2
+        else -> 0
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -122,7 +133,21 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    var biggerAngleCos = 0.0
+    if ((a >= b) && (a >= c)) biggerAngleCos = (b * b + c * c - a * a)/ (2 * b * c)
+    else if ((b >= c) && (b >= a)) biggerAngleCos = (a * a + c * c - b * b)/ (2 * a * c)
+    else if ((c >= b) && (c >= a)) biggerAngleCos = (a * a + b * b - c * c)/ (2 * a * b)
+    return when {
+        (c > a + b) || (a > c + b) || (b > c + a) -> -1
+        biggerAngleCos > 0 -> 0
+        biggerAngleCos == 0.0 -> 1
+        biggerAngleCos < 0 -> 2
+        else -> -1
+
+    }
+}
+
 
 /**
  * Средняя (3 балла)
@@ -132,4 +157,13 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
+    when {
+        (a > d) && (b > c) || (c > b) && (d > a) -> -1
+        (a == d) || (b == c) -> 0
+        (a < d) && (b > c) && (a >= c) && (d < b) -> d - a
+        (a < d) && (b > c) && (a >= c) && (d > b) -> b - a
+        (a < d) && (b > c) && (c > a) && (d < b) -> d - c
+        (a < d) && (b > c) && (c > a) && (d > b) -> b - c
+        else -> -1
+    }
