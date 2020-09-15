@@ -134,10 +134,10 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    var biggerAngleCos = 0.0
-    if ((a >= b) && (a >= c)) biggerAngleCos = (b * b + c * c - a * a)/ (2 * b * c)
-    else if ((b >= c) && (b >= a)) biggerAngleCos = (a * a + c * c - b * b)/ (2 * a * c)
-    else if ((c >= b) && (c >= a)) biggerAngleCos = (a * a + b * b - c * c)/ (2 * a * b)
+    val maxSide = maxOf(a,b,c)
+    val minSide = minOf(a,b,c)
+    val thirdSide = a + b + c - maxSide - minSide
+    val biggerAngleCos = (minSide * minSide + thirdSide * thirdSide -  maxSide * maxSide)/(2*minSide * thirdSide)
     return when {
         (c > a + b) || (a > c + b) || (b > c + a) -> -1
         biggerAngleCos > 0 -> 0
@@ -157,13 +157,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
-    when {
-        (a > d) && (b > c) || (c > b) && (d > a) -> -1
-        (a == d) || (b == c) -> 0
-        (a < d) && (b > c) && (a >= c) && (d <= b) -> d - a
-        (a < d) && (b > c) && (a >= c) && (d > b) -> b - a
-        (a < d) && (b > c) && (c > a) && (d <= b) -> d - c
-        (a < d) && (b > c) && (c > a) && (d > b) -> b - c
-        else -> -1
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int  {
+    if(minOf(b, d) - maxOf(a, c) >= 0){
+        return minOf(b, d) - maxOf(a, c)
+    }else{
+        return -1
     }
+}
