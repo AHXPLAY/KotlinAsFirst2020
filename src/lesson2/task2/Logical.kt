@@ -3,6 +3,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
+import kotlin.math.*
 
 /**
  * Пример
@@ -27,7 +28,7 @@ fun isNumberHappy(number: Int): Boolean = TODO()
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = TODO()
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = y1 == y2 || x1 == x2 || abs(y1 - y2) == abs(x1 -x2)
 
 
 /**
@@ -48,7 +49,10 @@ fun daysInMonth(month: Int, year: Int): Int = TODO()
 fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
-): Boolean = TODO()
+): Boolean {
+    val distanceBetweenCenters = sqrt(abs(x1 - x2).pow(2) + abs(y1 - y2).pow(2))
+    return distanceBetweenCenters + r1 <= r2
+}
 
 /**
  * Средняя (3 балла)
@@ -59,4 +63,12 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = TODO()
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
+    val minSideOfBrick = minOf(a, b, c)
+    val middleSideOfBrick = a + b + c - maxOf(a, b, c) - minSideOfBrick
+    val minSideOfHole = minOf(r, s)
+    val middleSideOfHole = r + s - minSideOfHole
+    return minSideOfBrick <= minSideOfHole && middleSideOfBrick <= middleSideOfHole
+
+
+}
