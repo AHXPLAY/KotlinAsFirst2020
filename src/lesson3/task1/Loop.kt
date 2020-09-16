@@ -2,7 +2,8 @@
 
 package lesson3.task1
 
-import kotlin.math.sqrt
+import lesson1.task1.sqr
+import kotlin.math.*
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -80,7 +81,17 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    var firstNum = 1
+    var secNum = 1
+    var numHolder : Int
+    for (i in 3..n){
+        numHolder = secNum
+        secNum = firstNum + secNum
+        firstNum = numHolder
+    }
+    return secNum
+}
 
 /**
  * Простая (2 балла)
@@ -201,7 +212,16 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var lenOfAll = 0
+    var i = 1
+    while(lenOfAll < n) {
+        lenOfAll += lenOfNum(sqr(i))
+        i++
+    }
+
+    return sqr(i - 1) / 10.0.pow(lenOfAll - n).toInt() % 10
+}
 
 /**
  * Сложная (5 баллов)
@@ -212,4 +232,22 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var lenOfAll = 0
+    var i = 1
+    while(lenOfAll < n) {
+        lenOfAll += lenOfNum(fib(i))
+        i++
+    }
+
+    return fib(i - 1) / 10.0.pow(lenOfAll - n).toInt() % 10
+}
+fun lenOfNum (n: Int): Int{
+    var num = n
+    var k = 0
+    while(num > 0){
+        num /= 10
+        k++
+    }
+    return k
+}
