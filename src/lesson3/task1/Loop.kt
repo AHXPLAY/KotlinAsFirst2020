@@ -235,7 +235,7 @@ fun squareSequenceDigit(n: Int): Int {
 fun fibSequenceDigit(n: Int): Int {
     var lenOfAll = 0
     var i = 1
-    while(lenOfAll < n) {
+    while (lenOfAll < n) {
         lenOfAll += lenOfNum(fib(i))
         i++
     }
@@ -245,7 +245,7 @@ fun fibSequenceDigit(n: Int): Int {
 fun lenOfNum (n: Int): Int{
     var num = n
     var k = 0
-    while(num > 0){
+    while (num > 0) {
         num /= 10
         k++
     }
