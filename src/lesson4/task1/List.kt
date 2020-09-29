@@ -241,8 +241,39 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    val listRomansNums = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M', "")
+    var num = n
+    var k = 0
+    val resultString : StringBuilder = StringBuilder()
+    while (num > 0) {
+        val lastNum = num % 10
+        when {
+            lastNum == 5 -> resultString.insert(0,listRomansNums[k + 1] )
+            lastNum % 5 <= 3 -> {
 
+                for (i in 0..(lastNum % 5 - 1)){
+                    resultString.insert(0, listRomansNums[k])
+                }
+                if (lastNum > 5) resultString.insert(0, listRomansNums[k + 1])
+            }
+            lastNum == 4 -> {
+                resultString.insert(0, listRomansNums[k + 1])
+                resultString.insert(0, listRomansNums[k])
+
+            }
+            lastNum == 9 -> {
+                resultString.insert(0, listRomansNums[k + 2])
+                resultString.insert(0, listRomansNums[k])
+
+            }
+
+        }
+        k += 2
+        num /= 10
+    }
+    return resultString.toString()
+}
 /**
  * Очень сложная (7 баллов)
  *
@@ -250,4 +281,47 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val numbersWordsFirst1 = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val numbersWordsFirst2 = listOf("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val numbersWordsSecond1 = listOf("одиннадцать", "двенадцать", "тринадцать",
+        "четырнадцать", "пятнадцать", "шестнадцать",
+        "семнадцать", "восемнадцать", "девятнадцать")
+    val numbersWordsSecond2 = listOf("десять", "двадцать", "тридцать",
+        "сорок", "пятьдесят", "шестьдесят",
+        "семьдесят", "восемьдесят", "девяносто")
+    val numbersWordsThird = listOf("сто", "двести", "триста",
+        "четыреста", "пятьсот", "шестьсот",
+        "семьсот", "восемьсот", "девятьсот")
+    val thousandWords = listOf("тысяч", "тысячи", "тысяча")
+    var num = n
+    var k = 0
+    val resultString : StringBuilder = StringBuilder()
+    while (num > 0) {
+        val lastNum = num % 10
+        val listOfWords : List<String>
+        if (k == 3) when {
+            lastNum == 1 && num / 10 % 10 != 1 -> resultString.insert(0, thousandWords[2] + " ")
+            lastNum >= 2 && lastNum <= 4 -> resultString.insert(0, thousandWords[1] + " ")
+            (lastNum >= 5 && lastNum <= 9) || lastNum == 0 -> resultString.insert(0, thousandWords[0] + " ")
+            else -> resultString.insert(0, thousandWords[0] + " ")
+        }
+        when {
+            k % 3 == 0 && num / 10 % 10 == 1 -> {
+                listOfWords = numbersWordsSecond1
+                k++
+                num /= 10
+            }
+            k == 0 -> listOfWords = numbersWordsFirst1
+            k == 3 -> listOfWords = numbersWordsFirst2
+            k % 3 == 1 && lastNum > 1 -> listOfWords = numbersWordsSecond2
+            k % 3 == 2 -> listOfWords = numbersWordsThird
+            else -> listOfWords = numbersWordsFirst1
+        }
+        if (lastNum != 0) resultString.insert(0, listOfWords[lastNum - 1] + " ")
+
+        num /=  10
+        k++
+    }
+    return resultString.toString().trim()
+}
