@@ -5,7 +5,6 @@ package lesson2.task1
 import lesson1.task1.discriminant
 import kotlin.math.abs
 import kotlin.math.max
-import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
@@ -139,7 +138,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val thirdSide = a + b + c - maxSide - minSide
     val biggerAngleCos = (minSide * minSide + thirdSide * thirdSide - maxSide * maxSide) / (2 * minSide * thirdSide)
     return when {
-        (c > a + b) || (a > c + b) || (b > c + a) -> -1
+        (a + b + c) - maxSide <= maxSide -> -1
         biggerAngleCos > 0 -> 0
         biggerAngleCos == 0.0 -> 1
         biggerAngleCos < 0 -> 2
