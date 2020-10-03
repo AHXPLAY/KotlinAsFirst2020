@@ -84,8 +84,8 @@ fun digitNumber(n: Int): Int = TODO()
 fun fib(n: Int): Int {
     var firstNum = 1
     var secNum = 1
-    var numHolder : Int
-    for (i in 3..n){
+    var numHolder: Int
+    for (i in 3..n) {
         numHolder = secNum
         secNum = firstNum + secNum
         firstNum = numHolder
@@ -215,7 +215,7 @@ fun cos(x: Double, eps: Double): Double = TODO()
 fun squareSequenceDigit(n: Int): Int {
     var lenOfAll = 0
     var i = 1
-    while(lenOfAll < n) {
+    while (lenOfAll < n) {
         lenOfAll += lenOfNum(sqr(i))
         i++
     }
@@ -242,7 +242,8 @@ fun fibSequenceDigit(n: Int): Int {
 
     return fib(i - 1) / 10.0.pow(lenOfAll - n).toInt() % 10
 }
-fun lenOfNum (n: Int): Int{
+
+fun lenOfNum(n: Int): Int {
     var num = n
     var k = 0
     while (num > 0) {
