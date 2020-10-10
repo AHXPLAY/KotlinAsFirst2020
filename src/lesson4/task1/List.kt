@@ -241,8 +241,9 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
+private val listRomansNums = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M', "")
 fun roman(n: Int): String {
-    val listRomansNums = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M', "")
+
     var num = n
     var k = 0
     val resultString: StringBuilder = StringBuilder()
@@ -282,25 +283,26 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
+private val numbersWordsFirst1 = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+private val numbersWordsFirst2 = listOf("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+private val numbersWordsSecond1 = listOf(
+    "одиннадцать", "двенадцать", "тринадцать",
+    "четырнадцать", "пятнадцать", "шестнадцать",
+    "семнадцать", "восемнадцать", "девятнадцать"
+)
+private val numbersWordsSecond2 = listOf(
+    "десять", "двадцать", "тридцать",
+    "сорок", "пятьдесят", "шестьдесят",
+    "семьдесят", "восемьдесят", "девяносто"
+)
+private val numbersWordsThird = listOf(
+    "сто", "двести", "триста",
+    "четыреста", "пятьсот", "шестьсот",
+    "семьсот", "восемьсот", "девятьсот"
+)
+private val thousandWords = listOf("тысяч", "тысячи", "тысяча")
 fun russian(n: Int): String {
-    val numbersWordsFirst1 = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val numbersWordsFirst2 = listOf("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val numbersWordsSecond1 = listOf(
-        "одиннадцать", "двенадцать", "тринадцать",
-        "четырнадцать", "пятнадцать", "шестнадцать",
-        "семнадцать", "восемнадцать", "девятнадцать"
-    )
-    val numbersWordsSecond2 = listOf(
-        "десять", "двадцать", "тридцать",
-        "сорок", "пятьдесят", "шестьдесят",
-        "семьдесят", "восемьдесят", "девяносто"
-    )
-    val numbersWordsThird = listOf(
-        "сто", "двести", "триста",
-        "четыреста", "пятьсот", "шестьсот",
-        "семьсот", "восемьсот", "девятьсот"
-    )
-    val thousandWords = listOf("тысяч", "тысячи", "тысяча")
+
     var num = n
     var k = 0
     val resultString: StringBuilder = StringBuilder()
