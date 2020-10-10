@@ -311,7 +311,7 @@ fun russian(n: Int): String {
         val listOfWords: List<String>
         if (k == 3) when {
             lastNum == 1 && num / 10 % 10 != 1 -> resultString.insert(0, thousandWords[2] + " ")
-            lastNum >= 2 && lastNum <= 4 -> resultString.insert(0, thousandWords[1] + " ")
+            lastNum >= 2 && lastNum <= 4 && num / 10 % 10 != 1 -> resultString.insert(0, thousandWords[1] + " ")
             (lastNum >= 5 && lastNum <= 9) || lastNum == 0 -> resultString.insert(0, thousandWords[0] + " ")
             else -> resultString.insert(0, thousandWords[0] + " ")
         }
@@ -333,4 +333,7 @@ fun russian(n: Int): String {
         k++
     }
     return resultString.toString().trim()
+}
+fun main(){
+    print(russian(13000))
 }
