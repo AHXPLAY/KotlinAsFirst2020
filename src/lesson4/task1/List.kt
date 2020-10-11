@@ -286,6 +286,7 @@ fun roman(n: Int): String {
 private val numbersWordsFirst1 = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
 private val numbersWordsFirst2 = listOf("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
 private val numbersWordsSecond1 = listOf(
+    "десять",
     "одиннадцать", "двенадцать", "тринадцать",
     "четырнадцать", "пятнадцать", "шестнадцать",
     "семнадцать", "восемнадцать", "девятнадцать"
@@ -322,12 +323,16 @@ fun russian(n: Int): String {
                 num /= 10
             }
             k == 0 -> listOfWords = numbersWordsFirst1
+            k == 0 -> listOfWords = numbersWordsFirst1
             k == 3 -> listOfWords = numbersWordsFirst2
             k % 3 == 1 && lastNum > 1 -> listOfWords = numbersWordsSecond2
             k % 3 == 2 -> listOfWords = numbersWordsThird
             else -> listOfWords = numbersWordsFirst1
         }
-        if (lastNum != 0) resultString.insert(0, listOfWords[lastNum - 1] + " ")
+        if (lastNum != 0 && listOfWords.size == 9) resultString.insert(0, listOfWords[lastNum - 1] + " ")
+        else if (listOfWords.size == 10){
+            resultString.insert(0, listOfWords[lastNum] + " ")
+        }
 
         num /= 10
         k++
@@ -335,5 +340,5 @@ fun russian(n: Int): String {
     return resultString.toString().trim()
 }
 fun main(){
-    print(russian(13000))
+    print(russian(114011))
 }
