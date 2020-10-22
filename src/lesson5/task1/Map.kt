@@ -280,7 +280,28 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    val mapModsToIndecies = mutableMapOf<Int, Int>()
+    for (i in list.indices) {
+        if (list[i] <= number) {
+            if (number == 0 && mapModsToIndecies[0] != null) {
+                return mapModsToIndecies[0]!! to i
+            }
+            mapModsToIndecies[number - list[i]] = i
+        }
+    }
+
+    for (i in 0..number / 2) {
+        if (mapModsToIndecies[i] != null
+            && mapModsToIndecies[number - i] != null
+            && mapModsToIndecies[i] != mapModsToIndecies[number - i]
+        ) {
+            return minOf(mapModsToIndecies[i]!!, mapModsToIndecies[number - i]!!) to
+                    maxOf(mapModsToIndecies[i]!!, mapModsToIndecies[number - i]!!)
+        }
+    }
+    return -1 to -1
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -304,10 +325,8 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    //поискав способы решения, я понял что нет решения данной задачи со сложностью меньше O(k * w),
-    //где k - количество предметов, а w - вместимость рюкзака(целое число).
-    //В приведенных тестах w довольно большие, поэтому возможно что эффективнее было бы сделать
-    //перебором со сложностью O(2^k)
+    // предыдущий комментарий был устаревшим, забыл изменить просто.
+    // Приведено решение со сложностью О(k * W). Прницип примерно понятен.
     val numOfTreasures = treasures.size
 
     val listOfWeightsAndCosts = treasures.values.toList()
@@ -322,22 +341,21 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         for (maxWeight in 0..capacity) {
             tableOfMaxCosts[quantity][maxWeight] = tableOfMaxCosts[quantity - 1][maxWeight]
             if (maxWeight >= listOfWeightsAndCosts[quantity - 1].first &&
-                tableOfMaxCosts[quantity][maxWeight] < tableOfMaxCosts[quantity - 1][maxWeight - listOfWeightsAndCosts[quantity - 1].first] + listOfWeightsAndCosts[quantity - 1].second
+                tableOfMaxCosts[quantity][maxWeight] <
+                tableOfMaxCosts
+                        [quantity - 1]
+                        [maxWeight - listOfWeightsAndCosts[quantity - 1].first] +
+                listOfWeightsAndCosts[quantity - 1].second
             ) {
 
                 tableOfMaxCosts[quantity][maxWeight] =
-                    tableOfMaxCosts[quantity - 1][maxWeight - listOfWeightsAndCosts[quantity - 1].first] + listOfWeightsAndCosts[quantity - 1].second
+                    tableOfMaxCosts[quantity - 1][maxWeight - listOfWeightsAndCosts[quantity - 1].first] +
+                            listOfWeightsAndCosts[quantity - 1].second
             }
 
 
         }
     }
-    /*for (i in 0 until tableOfMaxCosts.size) {
-        for (j in 0 until tableOfMaxCosts[i].size){
-            print("${tableOfMaxCosts[i][j]} ")
-        }
-        print("\n")
-    }*/
     val resultSet = mutableSetOf<String>()
     return resultTreasures(
         numOfTreasures,
@@ -357,26 +375,31 @@ fun resultTreasures(
     treasures: List<String>,
     set: MutableSet<String>
 ): Set<String> {
-    if (table[q][w] == 0) {
-        return set
-    } else if (table[q - 1][w] == table[q][w]) {
-        resultTreasures(q - 1, w, table, listofWeightsAndCosts, treasures, set)
-    } else {
-        set.add(treasures[q - 1])
-        resultTreasures(q - 1, w - listofWeightsAndCosts[q - 1].first, table, listofWeightsAndCosts, treasures, set)
+    when {
+        table[q][w] == 0 -> return set
+        table[q - 1][w] == table[q][w] ->
+            resultTreasures(
+                q - 1,
+                w,
+                table,
+                listofWeightsAndCosts,
+                treasures,
+                set
+            )
+        else -> {
+            set.add(treasures[q - 1])
+            resultTreasures(
+                q - 1,
+                w - listofWeightsAndCosts[q - 1].first,
+                table,
+                listofWeightsAndCosts,
+                treasures,
+                set
+            )
+        }
     }
     return set
 }
 
-fun main() {
-    print(
-        bagPacking(
-            mapOf(
-                "Слиток" to (1000 to 5000),
-                "Видеокарта" to (150 to 1000)
-            ),
-            1400
-        )
-    )
-}
+
 

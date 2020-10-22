@@ -253,7 +253,7 @@ fun roman(n: Int): String {
             lastNum == 5 -> resultString.insert(0, listRomansNums[k + 1])
             lastNum % 5 <= 3 -> {
 
-                for (i in 0..(lastNum % 5 - 1)) {
+                for (i in 0 until lastNum % 5) {
                     resultString.insert(0, listRomansNums[k])
                 }
                 if (lastNum > 5) resultString.insert(0, listRomansNums[k + 1])
@@ -306,15 +306,15 @@ fun russian(n: Int): String {
 
     var num = n
     var k = 0
-    val resultString: StringBuilder = StringBuilder()
+    val resultString = mutableListOf<String>()
     while (num > 0) {
         val lastNum = num % 10
         val listOfWords: List<String>
         if (k == 3) when {
-            lastNum == 1 && num / 10 % 10 != 1 -> resultString.insert(0, thousandWords[2] + " ")
-            lastNum >= 2 && lastNum <= 4 && num / 10 % 10 != 1 -> resultString.insert(0, thousandWords[1] + " ")
-            (lastNum >= 5 && lastNum <= 9) || lastNum == 0 -> resultString.insert(0, thousandWords[0] + " ")
-            else -> resultString.insert(0, thousandWords[0] + " ")
+            lastNum == 1 && num / 10 % 10 != 1 -> resultString.add(thousandWords[2])
+            lastNum >= 2 && lastNum <= 4 && num / 10 % 10 != 1 -> resultString.add(thousandWords[1])
+            (lastNum >= 5 && lastNum <= 9) || lastNum == 0 -> resultString.add(thousandWords[0])
+            else -> resultString.add(thousandWords[0])
         }
         when {
             k % 3 == 0 && num / 10 % 10 == 1 -> {
@@ -329,16 +329,18 @@ fun russian(n: Int): String {
             k % 3 == 2 -> listOfWords = numbersWordsThird
             else -> listOfWords = numbersWordsFirst1
         }
-        if (lastNum != 0 && listOfWords.size == 9) resultString.insert(0, listOfWords[lastNum - 1] + " ")
-        else if (listOfWords.size == 10){
-            resultString.insert(0, listOfWords[lastNum] + " ")
+        if (lastNum != 0 && listOfWords.size == 9) resultString.add(listOfWords[lastNum - 1])
+        else if (listOfWords.size == 10) {
+            resultString.add(listOfWords[lastNum])
         }
 
         num /= 10
         k++
     }
-    return resultString.toString().trim()
+
+    return resultString.reversed().joinToString(separator = " ")
 }
-fun main(){
+
+fun main() {
     print(russian(114011))
 }
