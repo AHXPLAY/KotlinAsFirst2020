@@ -241,31 +241,31 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-private val listRomansNums = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M', "")
+private val listRomansNums = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M', ' ')
 fun roman(n: Int): String {
 
     var num = n
     var k = 0
-    val resultString: StringBuilder = StringBuilder()
+    val resultString = mutableListOf<Char>()
     while (num > 0) {
         val lastNum = num % 10
         when {
-            lastNum == 5 -> resultString.insert(0, listRomansNums[k + 1])
+            lastNum == 5 -> resultString.add(listRomansNums[k + 1])
             lastNum % 5 <= 3 -> {
 
                 for (i in 0 until lastNum % 5) {
-                    resultString.insert(0, listRomansNums[k])
+                    resultString.add(listRomansNums[k])
                 }
-                if (lastNum > 5) resultString.insert(0, listRomansNums[k + 1])
+                if (lastNum > 5) resultString.add(listRomansNums[k + 1])
             }
             lastNum == 4 -> {
-                resultString.insert(0, listRomansNums[k + 1])
-                resultString.insert(0, listRomansNums[k])
+                resultString.add(listRomansNums[k + 1])
+                resultString.add(listRomansNums[k])
 
             }
             lastNum == 9 -> {
-                resultString.insert(0, listRomansNums[k + 2])
-                resultString.insert(0, listRomansNums[k])
+                resultString.add(listRomansNums[k + 2])
+                resultString.add(listRomansNums[k])
 
             }
 
@@ -273,7 +273,7 @@ fun roman(n: Int): String {
         k += 2
         num /= 10
     }
-    return resultString.toString()
+    return resultString.reversed().joinToString("")
 }
 
 /**
@@ -312,8 +312,8 @@ fun russian(n: Int): String {
         val listOfWords: List<String>
         if (k == 3) when {
             lastNum == 1 && num / 10 % 10 != 1 -> resultString.add(thousandWords[2])
-            lastNum >= 2 && lastNum <= 4 && num / 10 % 10 != 1 -> resultString.add(thousandWords[1])
-            (lastNum >= 5 && lastNum <= 9) || lastNum == 0 -> resultString.add(thousandWords[0])
+            lastNum in 2..4 && num / 10 % 10 != 1 -> resultString.add(thousandWords[1])
+            lastNum in 5..9 || lastNum == 0 -> resultString.add(thousandWords[0])
             else -> resultString.add(thousandWords[0])
         }
         when {

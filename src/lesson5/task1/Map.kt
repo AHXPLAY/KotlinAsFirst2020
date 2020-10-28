@@ -2,8 +2,6 @@
 
 package lesson5.task1
 
-import kotlin.math.max
-
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -281,23 +279,25 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    val mapModsToIndecies = mutableMapOf<Int, Int>()
+    val mapModsToIndices = mutableMapOf<Int, Int>()
     for (i in list.indices) {
         if (list[i] <= number) {
-            if (number == 0 && mapModsToIndecies[0] != null) {
-                return mapModsToIndecies[0]!! to i
+            if (number == 0 && mapModsToIndices[0] != null) {
+                return mapModsToIndices[0]!! to i
             }
-            mapModsToIndecies[number - list[i]] = i
+            mapModsToIndices[number - list[i]] = i
         }
     }
 
     for (i in 0..number / 2) {
-        if (mapModsToIndecies[i] != null
-            && mapModsToIndecies[number - i] != null
-            && mapModsToIndecies[i] != mapModsToIndecies[number - i]
+        if (mapModsToIndices[i] != null
+            && mapModsToIndices[number - i] != null
+            && mapModsToIndices[i] != mapModsToIndices[number - i]
         ) {
-            return minOf(mapModsToIndecies[i]!!, mapModsToIndecies[number - i]!!) to
-                    maxOf(mapModsToIndecies[i]!!, mapModsToIndecies[number - i]!!)
+            val num1 = mapModsToIndices[i] ?: -1
+            val num2 = mapModsToIndices[number - i] ?: -1
+            return minOf(num1, num2) to
+                    maxOf(num1, num2)
         }
     }
     return -1 to -1
@@ -327,6 +327,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
     // предыдущий комментарий был устаревшим, забыл изменить просто.
     // Приведено решение со сложностью О(k * W). Прницип примерно понятен.
+    // С преподавателем подробно не обсуждал, обсужу на ближайшей практике.
     val numOfTreasures = treasures.size
 
     val listOfWeightsAndCosts = treasures.values.toList()
