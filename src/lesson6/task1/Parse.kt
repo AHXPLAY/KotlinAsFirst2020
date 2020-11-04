@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import java.lang.IndexOutOfBoundsException
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -42,24 +44,6 @@ fun timeSecondsToStr(seconds: Int): String {
     val minute = (seconds % 3600) / 60
     val second = seconds % 60
     return String.format("%02d:%02d:%02d", hour, minute, second)
-}
-
-/**
- * Пример: консольный ввод
- */
-fun main() {
-    println("Введите время в формате ЧЧ:ММ:СС")
-    val line = readLine()
-    if (line != null) {
-        val seconds = timeStrToSeconds(line)
-        if (seconds == -1) {
-            println("Введённая строка $line не соответствует формату ЧЧ:ММ:СС")
-        } else {
-            println("Прошло секунд с начала суток: $seconds")
-        }
-    } else {
-        println("Достигнут <конец файла> в процессе чтения строки. Программа прервана")
-    }
 }
 
 
@@ -149,7 +133,23 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val listOfWords = str.split(" ")
+    var index = -1
+    var counter = 0
+    for (i in 0 until listOfWords.size - 1) {
+        counter++
+        if (listOfWords[i].toLowerCase() == listOfWords[i + 1].toLowerCase()) {
+            index++
+            break
+        }
+        index += 1 + listOfWords[i].length
+    }
+    if (counter == listOfWords.size - 1) {
+        index = -1
+    }
+    return index
+}
 
 /**
  * Сложная (6 баллов)
@@ -213,4 +213,97 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val nowPos = cells / 2
+    val cellsValues = mutableListOf<Int>()
+    for (i in 0 until cells) {
+        cellsValues.add(0)
+
+    }
+    val commandsList = commands.toMutableList()
+    val allowedCommands = setOf('>', '<', '+', '-', '[', ']', ' ')
+    var numOfBrackets = 0
+    for (i in commandsList) {
+        if (i !in allowedCommands) throw IllegalArgumentException("неразрешенная команда")
+        if (i == '[') numOfBrackets++
+        if (i == ']') numOfBrackets--
+    }
+    if (numOfBrackets != 0) throw IllegalArgumentException("после \'[ \' нет \']\'")
+    executeCommands(limit, nowPos, commandsList, cellsValues)
+    return cellsValues
+}
+
+fun executeCommands(
+    limit: Int,
+    startPos: Int,
+    commandsList: MutableList<Char>,
+    cellsValues: MutableList<Int>,
+) {
+    var counterOfCommands = 0
+    val stackOfStartBracketIndices = mutableListOf<Int>()
+    var nowPos = startPos
+    var commandIndex = 0
+    while (counterOfCommands < limit) {
+        try {
+            commandsList[commandIndex]
+        } catch (e: IndexOutOfBoundsException) {
+            break
+        }
+        when (commandsList[commandIndex]) {
+            '>' -> {
+                nowPos++
+                if (nowPos >= cellsValues.size) throw IllegalStateException("выход за границы конвейера")
+                counterOfCommands++
+            }
+            '<' -> {
+                nowPos--
+                if (nowPos < 0) throw IllegalStateException("выход за границы конвейера")
+                counterOfCommands++
+            }
+            '+' -> {
+                cellsValues[nowPos]++
+                counterOfCommands++
+            }
+            '-' -> {
+                cellsValues[nowPos]--
+                counterOfCommands++
+            }
+            '[' -> {
+                counterOfCommands++
+                stackOfStartBracketIndices.add(commandIndex)
+                var indexOfEndBracket = 0
+                var numOfBrackets = 0
+                for (i in commandIndex until commandsList.size) {
+                    when {
+                        commandsList[i] == '[' -> numOfBrackets++
+                        commandsList[i] == ']' -> numOfBrackets--
+                    }
+                    if (numOfBrackets == 0) {
+                        indexOfEndBracket = i
+                        break
+                    }
+                }
+                if (cellsValues[nowPos] == 0) {
+                    commandIndex = indexOfEndBracket - 1
+                }
+            }
+            ']' -> {
+                counterOfCommands++
+                if (cellsValues[nowPos] == 0) {
+                    stackOfStartBracketIndices.removeLast()
+                } else {
+                    commandIndex = stackOfStartBracketIndices.last()
+                }
+            }
+            ' ' -> counterOfCommands++
+        }
+        commandIndex++
+    }
+}
+
+fun main() {
+    val cells = readLine()
+    val commands = readLine()
+    val limit = readLine()
+    print(computeDeviceCells(cells?.toInt() ?: 0, commands ?: " ", limit?.toInt() ?: 10000))
+}

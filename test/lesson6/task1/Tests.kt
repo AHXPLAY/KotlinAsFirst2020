@@ -12,8 +12,8 @@ class Tests {
         assertEquals(36000, timeStrToSeconds("10:00:00"))
         assertEquals(41685, timeStrToSeconds("11:34:45"))
         assertEquals(86399, timeStrToSeconds("23:59:59"))
+        assertEquals(86399, timeStrToSeconds("AA:59:59"))
     }
-
     @Test
     @Tag("Example")
     fun twoDigitStr() {
@@ -104,6 +104,8 @@ class Tests {
     @Tag("6")
     fun firstDuplicateIndex() {
         assertEquals(-1, firstDuplicateIndex("Привет"))
+        assertEquals(-1, firstDuplicateIndex("Привет парниша как дела"))
+        assertEquals(0, firstDuplicateIndex("Он он пошёл в школу"))
         assertEquals(9, firstDuplicateIndex("Он пошёл в в школу"))
         assertEquals(40, firstDuplicateIndex("Яблоко упало на ветку с ветки оно упало на на землю"))
         assertEquals(9, firstDuplicateIndex("Мы пошли прямо Прямо располагался магазин"))
@@ -131,15 +133,17 @@ class Tests {
     @Test
     @Tag("7")
     fun computeDeviceCells() {
-        assertEquals(listOf(0, 0, 0, 0, 0, 1, 1, 1, 1, 1), computeDeviceCells(10, "+>+>+>+>+", 10000))
+        assertEquals(listOf(0, 0, 0, 0, 0, 1, 1, 0, 0, 0), computeDeviceCells(10, "+>+>+>+>+", 4))
         assertEquals(listOf(-1, -1, -1, -1, -1, 0, 0, 0, 0, 0), computeDeviceCells(10, "<-<-<-<-<-", 10000))
+        assertEquals(listOf(0, 0, 0, 0, 0, 1, 1, 1, 1, 1), computeDeviceCells(10, "+>+>+>+>+", 10000))
+
         assertEquals(listOf(1, 1, 1, 1, 1, 0, 0, 0, 0, 0), computeDeviceCells(10, "- <<<<< +[>+]", 10000))
         assertEquals(
             listOf(0, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0),
             computeDeviceCells(11, "<<<<< + >>>>>>>>>> --[<-] >+[>+] >++[--< <[<] >+[>+] >++]", 10000)
         )
 
-        assertEquals(listOf(0, 0, 0, 0, 0, 1, 1, 0, 0, 0), computeDeviceCells(10, "+>+>+>+>+", 4))
+
         assertEquals(listOf(0, 0, -1, -1, -1, 0, 0, 0, 0, 0), computeDeviceCells(10, "<-<-<-<-<-", 6))
         assertEquals(listOf(1, 1, 1, 0, 0, -1, 0, 0, 0, 0), computeDeviceCells(10, "- <<<<< +[>+]", 17))
         assertEquals(
