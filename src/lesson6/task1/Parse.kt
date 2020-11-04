@@ -141,7 +141,7 @@ fun firstDuplicateIndex(str: String): Int {
     for (i in 0 until listOfWords.size - 1) {
         counter++
         if (listOfWords[i].toLowerCase() == listOfWords[i + 1].toLowerCase()) {
-            indexOfWord = indexInString + 1
+            indexOfWord = indexInString
             break
         }
         indexInString += 1 + listOfWords[i].length
