@@ -136,7 +136,7 @@ fun plusMinus(expression: String): Int = TODO()
 fun firstDuplicateIndex(str: String): Int {
     val listOfWords = str.split(" ")
     var indexOfWord = -1
-    var indexInString= 0
+    var indexInString = 0
     var counter = 0
     for (i in 0 until listOfWords.size - 1) {
         counter++
