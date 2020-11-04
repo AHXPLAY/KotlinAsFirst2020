@@ -135,20 +135,18 @@ fun plusMinus(expression: String): Int = TODO()
  */
 fun firstDuplicateIndex(str: String): Int {
     val listOfWords = str.split(" ")
-    var index = -1
+    var indexOfWord = -1
+    var indexInString= 0
     var counter = 0
     for (i in 0 until listOfWords.size - 1) {
         counter++
         if (listOfWords[i].toLowerCase() == listOfWords[i + 1].toLowerCase()) {
-            index++
+            indexOfWord = indexInString + 1
             break
         }
-        index += 1 + listOfWords[i].length
+        indexInString += 1 + listOfWords[i].length
     }
-    if (counter == listOfWords.size - 1) {
-        index = -1
-    }
-    return index
+    return indexOfWord
 }
 
 /**
@@ -284,7 +282,8 @@ fun executeCommands(
                     }
                 }
                 if (cellsValues[nowPos] == 0) {
-                    commandIndex = indexOfEndBracket - 1
+                    commandIndex = indexOfEndBracket
+                    stackOfStartBracketIndices.removeLast()
                 }
             }
             ']' -> {

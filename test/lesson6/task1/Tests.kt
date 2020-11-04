@@ -103,6 +103,7 @@ class Tests {
     @Test
     @Tag("6")
     fun firstDuplicateIndex() {
+        assertEquals(0, firstDuplicateIndex("a a"))
         assertEquals(-1, firstDuplicateIndex("Привет"))
         assertEquals(-1, firstDuplicateIndex("Привет парниша как дела"))
         assertEquals(0, firstDuplicateIndex("Он он пошёл в школу"))
@@ -133,6 +134,7 @@ class Tests {
     @Test
     @Tag("7")
     fun computeDeviceCells() {
+        assertEquals(listOf(401), computeDeviceCells(1, "[++++++++++]++++++++[++++]", 501))
         assertEquals(listOf(0, 0, 0, 0, 0, 1, 1, 0, 0, 0), computeDeviceCells(10, "+>+>+>+>+", 4))
         assertEquals(listOf(-1, -1, -1, -1, -1, 0, 0, 0, 0, 0), computeDeviceCells(10, "<-<-<-<-<-", 10000))
         assertEquals(listOf(0, 0, 0, 0, 0, 1, 1, 1, 1, 1), computeDeviceCells(10, "+>+>+>+>+", 10000))
