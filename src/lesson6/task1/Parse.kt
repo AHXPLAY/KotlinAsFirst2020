@@ -3,6 +3,7 @@
 package lesson6.task1
 
 import java.lang.IndexOutOfBoundsException
+import java.util.*
 
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
@@ -238,7 +239,7 @@ fun executeCommands(
     cellsValues: MutableList<Int>,
 ) {
     var counterOfCommands = 0
-    val stackOfStartBracketIndices = mutableListOf<Int>()
+    val stackOfStartBracketIndices = Stack<Int>()
     var nowPos = startPos
     var commandIndex = 0
     while (counterOfCommands < limit) {
@@ -268,7 +269,7 @@ fun executeCommands(
             }
             '[' -> {
                 counterOfCommands++
-                stackOfStartBracketIndices.add(commandIndex)
+                stackOfStartBracketIndices.push(commandIndex)
                 var indexOfEndBracket = 0
                 var numOfBrackets = 0
                 for (i in commandIndex until commandsList.size) {
@@ -283,15 +284,15 @@ fun executeCommands(
                 }
                 if (cellsValues[nowPos] == 0) {
                     commandIndex = indexOfEndBracket
-                    stackOfStartBracketIndices.removeLast()
+                    stackOfStartBracketIndices.pop()
                 }
             }
             ']' -> {
                 counterOfCommands++
                 if (cellsValues[nowPos] == 0) {
-                    stackOfStartBracketIndices.removeLast()
+                    stackOfStartBracketIndices.pop()
                 } else {
-                    commandIndex = stackOfStartBracketIndices.last()
+                    commandIndex = stackOfStartBracketIndices.peek()
                 }
             }
             ' ' -> counterOfCommands++
