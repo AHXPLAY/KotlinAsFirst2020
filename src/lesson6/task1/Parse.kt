@@ -136,18 +136,14 @@ fun plusMinus(expression: String): Int = TODO()
  */
 fun firstDuplicateIndex(str: String): Int {
     val listOfWords = str.split(" ")
-    var indexOfWord = -1
     var indexInString = 0
-    var counter = 0
     for (i in 0 until listOfWords.size - 1) {
-        counter++
         if (listOfWords[i].toLowerCase() == listOfWords[i + 1].toLowerCase()) {
-            indexOfWord = indexInString
-            break
+            return indexInString
         }
         indexInString += 1 + listOfWords[i].length
     }
-    return indexOfWord
+    return -1
 }
 
 /**
@@ -242,12 +238,7 @@ fun executeCommands(
     val stackOfStartBracketIndices = Stack<Int>()
     var nowPos = startPos
     var commandIndex = 0
-    while (counterOfCommands < limit) {
-        try {
-            commandsList[commandIndex]
-        } catch (e: IndexOutOfBoundsException) {
-            break
-        }
+    while (counterOfCommands < limit && commandIndex < commandsList.size) {
         when (commandsList[commandIndex]) {
             '>' -> {
                 nowPos++
