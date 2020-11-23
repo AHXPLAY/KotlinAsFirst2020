@@ -107,7 +107,9 @@ fun searchSubstrings(text: String, word: String): Int {
     for (i in text.indices) {
         when {
             text[i] != word[lastCharIndex] -> continue
-            word == text.substring(i - word.length + 1, i + 1) -> counter++
+            (i + 1 >= word.length) &&
+                    (i < text.length) &&
+                    word == text.substring(i - word.length + 1, i + 1) -> counter++
         }
     }
     return counter
