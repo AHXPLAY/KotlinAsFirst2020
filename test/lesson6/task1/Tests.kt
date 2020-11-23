@@ -13,6 +13,7 @@ class Tests {
         assertEquals(41685, timeStrToSeconds("11:34:45"))
         assertEquals(86399, timeStrToSeconds("23:59:59"))
     }
+
     @Test
     @Tag("Example")
     fun twoDigitStr() {
@@ -152,6 +153,13 @@ class Tests {
             computeDeviceCells(11, "<<<<< + >>>>>>>>>> --[<-] >+[>+] >++[--< <[<] >+[>+] >++]", 256)
         )
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "===", 3) }
+        assertThrows(IllegalArgumentException::class.java) {
+            computeDeviceCells(
+                1,
+                "++++++]+++++++++++++++++++[++++++++++++++++++]+++]+++++--++-+-+---+[++<>-<+-++--+<][---<++<<<>]-<+<[---<-> +<] -<---+ -]<[-<<<<--+--- >+ -+--[-]--+-+---+<[+<+-[ <<--<><<-+--<- <-- + -+>]---<]<<<-< <--->--++ +<>< +->-[<--[<-<>-  ",
+                8929
+            )
+        }
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "+>+>[+>", 3) }
         assertThrows(IllegalStateException::class.java) { computeDeviceCells(20, ">>>>>>>>>>>>>", 12) }
     }

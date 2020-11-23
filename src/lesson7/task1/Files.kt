@@ -2,7 +2,10 @@
 
 package lesson7.task1
 
+import lesson3.task1.digitNumber
 import java.io.File
+import java.util.*
+import kotlin.math.pow
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +66,16 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val inputFile = File(inputName)
+    val outputFile = File(outputName).bufferedWriter()
+    inputFile.forEachLine { line ->
+        var isStartUnderscore = false
+        if (line.isNotEmpty()) {
+            isStartUnderscore = line[0] == '_'
+        }
+        if (!isStartUnderscore) outputFile.write(line + "\r\n")
+    }
+    outputFile.close()
 }
 
 /**
@@ -75,8 +87,31 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val inputFile = File(inputName)
+    val text = inputFile.readLines().joinToString("\r\n").toLowerCase()
+    val numOfSubstrings = mutableMapOf<String, Int>()
+    for (j in substrings) {
+        val counter = searchSubstrings(text, j.toLowerCase())
+        numOfSubstrings[j] = counter
+    }
+    return numOfSubstrings
+}
 
+fun searchSubstrings(text: String, word: String): Int {
+    if (word.isEmpty()) {
+        return 0
+    }
+    var counter = 0
+    val lastCharIndex = word.length - 1
+    for (i in text.indices) {
+        when {
+            text[i] != word[lastCharIndex] -> continue
+            word == text.substring(i - word.length + 1, i + 1) -> counter++
+        }
+    }
+    return counter
+}
 
 /**
  * Средняя (12 баллов)
@@ -92,7 +127,30 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val inputFile = File(inputName)
+    val outputFile = File(outputName).bufferedWriter()
+    val setOfSizzlingLetters = setOf('ж', 'ч', 'ш', 'щ')
+    val setOfWrongVowels = setOf('ы', 'я', 'ю')
+    val text = inputFile.readLines().joinToString("\r\n")
+    val textStringBuilder = StringBuilder(text)
+    for (i in 0 until text.length - 1) {
+        if (text[i].toLowerCase() in setOfSizzlingLetters) {
+            val vowel = text[i + 1]
+            if (vowel.toLowerCase() in setOfWrongVowels) {
+                when (vowel) {
+                    'ы' -> textStringBuilder[i + 1] = 'и'
+                    'я' -> textStringBuilder[i + 1] = 'а'
+                    'ю' -> textStringBuilder[i + 1] = 'у'
+                    'Ы' -> textStringBuilder[i + 1] = 'И'
+                    'Я' -> textStringBuilder[i + 1] = 'А'
+                    'Ю' -> textStringBuilder[i + 1] = 'У'
+                }
+
+            }
+        }
+    }
+    outputFile.write(textStringBuilder.toString())
+    outputFile.close()
 }
 
 /**
@@ -113,7 +171,22 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val inputFile = File(inputName)
+    val outputFile = File(outputName).bufferedWriter()
+    val resultLines = mutableListOf<String>()
+    var maxLength = 0
+    for (line in inputFile.readLines()) {
+        if (line.length > maxLength) maxLength = line.trim().length
+        resultLines.add(line.trim())
+    }
+    for (i in resultLines.indices) {
+        if (resultLines[i].length < maxLength) {
+            val deltaLength = maxLength - resultLines[i].length
+            resultLines[i] = " ".repeat(deltaLength / 2) + resultLines[i]
+        }
+    }
+    outputFile.write(resultLines.joinToString("\r\n"))
+    outputFile.close()
 }
 
 /**
@@ -144,7 +217,56 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val inputFile = File(inputName)
+    val outputFile = File(outputName).bufferedWriter()
+    var maxLength = 0
+    val resultLines = mutableListOf<String>()
+    for (line in inputFile.readLines()) {
+        resultLines.add(line.trim())
+    }
+    for (i in resultLines.indices) {
+        val wordsInLine = deleteEmptyStrings(resultLines[i].split(" "))
+        resultLines[i] = wordsInLine.joinToString(" ")
+        if (resultLines[i].length > maxLength) maxLength = resultLines[i].length
+    }
+    for (i in resultLines.indices) {
+        val wordsInLine = resultLines[i].split(" ")
+        val spaces = countSpaces(resultLines[i], maxLength)
+        resultLines[i] = makeLineWithSpaces(wordsInLine, spaces)
+    }
+    outputFile.write(resultLines.joinToString("\r\n"))
+    outputFile.close()
+}
+
+fun makeLineWithSpaces(words: List<String>, spaces: List<Int>): String {
+    val resultSB = StringBuilder()
+    resultSB.append(words.first())
+    for (i in spaces.indices) {
+        resultSB.append(" ".repeat(spaces[i] + 1) + words[i + 1])
+    }
+    return resultSB.toString()
+}
+
+fun countSpaces(line: String, maxLength: Int): List<Int> {
+    val len = line.length
+    val numOfSpaces = line.split(" ").size - 1
+    val resultList = mutableListOf<Int>()
+    if (numOfSpaces > 0) {
+        val spacesBetweenWords = (maxLength - len) / numOfSpaces
+        val numOfBiggerSpaces = (maxLength - len) % numOfSpaces
+        for (i in 0 until numOfSpaces) {
+            var num = spacesBetweenWords
+            if (i < numOfBiggerSpaces) num++
+            resultList.add(num)
+        }
+    }
+    return resultList
+}
+
+fun deleteEmptyStrings(list: List<String>): List<String> {
+    val newList = mutableListOf<String>()
+    for (word in list) if (word.isNotEmpty()) newList.add(word)
+    return newList
 }
 
 /**
@@ -268,21 +390,159 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * Соответствующий выходной файл:
 <html>
-    <body>
-        <p>
-            Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
-            Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
-        </p>
-        <p>
-            Suspendisse <s>et elit in enim tempus iaculis</s>.
-        </p>
-    </body>
+<body>
+<p>
+Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
+Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
+</p>
+<p>
+Suspendisse <s>et elit in enim tempus iaculis</s>.
+</p>
+</body>
 </html>
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val inputFile = File(inputName)
+    val lines = inputFile.readLines()
+    val outputFile = File(outputName).bufferedWriter()
+    val openTags = listOf("<html>", "<body>", "<p>", "<i>", "<b>", "<s>")
+    val closeTags = listOf("</html>", "</body>", "</p>", "</i>", "</b>", "</s>")
+    val allowedSymbols = setOf('*', '~')
+    val htmlSB = StringBuilder()
+    val stackOfTags = Stack<Int>()
+
+    fun chooseTags(markdown: String): String {
+        val mdList = markdown.toList()
+        var symbols = ""
+        var addedTags = ""
+        for (j in mdList.indices) {
+            var lastTag = -1
+            if (!stackOfTags.empty()) lastTag = stackOfTags.peek()
+            when (mdList[j]) {
+                '*' -> {
+                    if (j + 1 < mdList.size && mdList[j + 1] == '*') {
+                        symbols += '*'
+                        continue
+                    } else {
+                        symbols += '*'
+                        when (symbols.length) {
+                            1 -> {
+                                symbols = ""
+                                when (lastTag) {
+                                    3 -> {
+                                        addedTags += closeTags[3]
+                                        stackOfTags.pop()
+                                    }
+                                    else -> {
+                                        addedTags += openTags[3]
+                                        stackOfTags.push(3)
+                                    }
+                                }
+                            }
+                            2 -> {
+                                symbols = ""
+                                when (lastTag) {
+                                    4 -> {
+                                        addedTags += closeTags[4]
+                                        stackOfTags.pop()
+                                    }
+                                    else -> {
+                                        addedTags += openTags[4]
+                                        stackOfTags.push(4)
+                                    }
+                                }
+                            }
+                            3 -> {
+                                symbols = ""
+                                when (lastTag) {
+                                    3 -> {
+                                        addedTags += closeTags[3]
+                                        stackOfTags.pop()
+                                        if (!stackOfTags.empty() && stackOfTags.peek() == 4) {
+                                            addedTags += closeTags[4]
+                                            stackOfTags.pop()
+                                        } else {
+                                            addedTags += openTags[4]
+                                            stackOfTags.push(4)
+                                        }
+                                    }
+                                    4 -> {
+                                        addedTags += closeTags[4]
+                                        stackOfTags.pop()
+                                        if (!stackOfTags.empty() && stackOfTags.peek() == 3) {
+                                            addedTags += closeTags[3]
+                                            stackOfTags.pop()
+                                        } else {
+                                            addedTags += openTags[3]
+                                            stackOfTags.push(3)
+                                        }
+                                    }
+                                    else -> {
+                                        addedTags += openTags[4] + openTags[3]
+                                        stackOfTags.push(4)
+                                        stackOfTags.push(3)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                '~' -> {
+                    if (symbols != "~") {
+                        symbols += '~'
+                        continue
+                    } else {
+                        symbols = ""
+                        if (lastTag == 5) {
+                            addedTags += closeTags[5]
+                            stackOfTags.pop()
+                        } else {
+                            addedTags += openTags[5]
+                            stackOfTags.push(5)
+                        }
+                    }
+                }
+            }
+        }
+        return addedTags
+    }
+
+    htmlSB.appendLine("${openTags[0]}\n${openTags[1]}\n${openTags[2]}")
+    for (i in lines.indices) {
+        if (lines[i].isEmpty()) {
+            htmlSB.appendLine(closeTags[2])
+            if (i < lines.lastIndex) htmlSB.appendLine(openTags[2])
+            continue
+        }
+        var markdown = ""
+        for (j in lines[i].indices) {
+            var nextSym = ' '
+            if (j + 1 < lines[i].length) nextSym = lines[i][j + 1]
+
+            if (lines[i][j] in allowedSymbols && nextSym in allowedSymbols) markdown += lines[i][j]
+            else if (lines[i][j] in allowedSymbols && nextSym !in allowedSymbols) {
+                markdown += lines[i][j]
+                htmlSB.append(chooseTags(markdown))
+                markdown = ""
+            } else htmlSB.append(lines[i][j])
+
+
+        }
+        htmlSB.appendLine()
+    }
+
+    htmlSB.appendLine("${closeTags[2]}\n${closeTags[1]}\n${closeTags[0]}")
+
+    outputFile.use {
+        it.write(htmlSB.toString())
+    }
+}
+
+
+fun main() {
+    markdownToHtmlSimple("input/markdown_tags_test.md", "")
 }
 
 /**
@@ -319,65 +579,65 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  *
  * Пример входного файла:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
-* Утка по-пекински
-    * Утка
-    * Соус
-* Салат Оливье
-    1. Мясо
-        * Или колбаса
-    2. Майонез
-    3. Картофель
-    4. Что-то там ещё
-* Помидоры
-* Фрукты
-    1. Бананы
-    23. Яблоки
-        1. Красные
-        2. Зелёные
+ * Утка по-пекински
+ * Утка
+ * Соус
+ * Салат Оливье
+1. Мясо
+ * Или колбаса
+2. Майонез
+3. Картофель
+4. Что-то там ещё
+ * Помидоры
+ * Фрукты
+1. Бананы
+23. Яблоки
+1. Красные
+2. Зелёные
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  *
  *
  * Соответствующий выходной файл:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
 <html>
-  <body>
-    <p>
-      <ul>
-        <li>
-          Утка по-пекински
-          <ul>
-            <li>Утка</li>
-            <li>Соус</li>
-          </ul>
-        </li>
-        <li>
-          Салат Оливье
-          <ol>
-            <li>Мясо
-              <ul>
-                <li>Или колбаса</li>
-              </ul>
-            </li>
-            <li>Майонез</li>
-            <li>Картофель</li>
-            <li>Что-то там ещё</li>
-          </ol>
-        </li>
-        <li>Помидоры</li>
-        <li>Фрукты
-          <ol>
-            <li>Бананы</li>
-            <li>Яблоки
-              <ol>
-                <li>Красные</li>
-                <li>Зелёные</li>
-              </ol>
-            </li>
-          </ol>
-        </li>
-      </ul>
-    </p>
-  </body>
+<body>
+<p>
+<ul>
+<li>
+Утка по-пекински
+<ul>
+<li>Утка</li>
+<li>Соус</li>
+</ul>
+</li>
+<li>
+Салат Оливье
+<ol>
+<li>Мясо
+<ul>
+<li>Или колбаса</li>
+</ul>
+</li>
+<li>Майонез</li>
+<li>Картофель</li>
+<li>Что-то там ещё</li>
+</ol>
+</li>
+<li>Помидоры</li>
+<li>Фрукты
+<ol>
+<li>Бананы</li>
+<li>Яблоки
+<ol>
+<li>Красные</li>
+<li>Зелёные</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</p>
+</body>
 </html>
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -404,23 +664,23 @@ fun markdownToHtml(inputName: String, outputName: String) {
  * Вывести в выходной файл процесс умножения столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 111):
-   19935
-*    111
+19935
+ *    111
 --------
-   19935
+19935
 + 19935
 +19935
 --------
- 2212785
+2212785
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  * Нули в множителе обрабатывать так же, как и остальные цифры:
-  235
-*  10
+235
+ *  10
 -----
-    0
+0
 +235
 -----
- 2350
+2350
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
@@ -434,21 +694,79 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Вывести в выходной файл процесс деления столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 22):
-  19935 | 22
- -198     906
- ----
-    13
-    -0
-    --
-    135
-   -132
-   ----
-      3
+19935 | 22
+-198    906
+----
+13
+-0
+--
+135
+-132
+----
+3
 
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    val divisionSB = StringBuilder(" $lhv | $rhv")
+    divisionSB.appendLine()
+    val result = lhv / rhv
+    val resultDigits = numberIntoDigitsList(result)
+    val lhvDigits = numberIntoDigitsList(lhv)
+
+    var firstNum = 0
+    var nowPos = 0
+    var lineIndent = 0
+    var previousModStringLength = 0
+
+    for (i in resultDigits.indices) {
+        val subtrahendNum = resultDigits[i] * rhv
+        val subtrahendString = "-$subtrahendNum"
+        if (previousModStringLength == digitNumber(subtrahendNum) && lineIndent > 0) lineIndent--
+        divisionSB.append(" ".repeat(lineIndent) + subtrahendString)
+        if (i == 0) {
+            firstNum = digitsIntoNumber(lhvDigits.subList(0, digitNumber(subtrahendNum)))
+            nowPos = digitNumber(subtrahendNum)
+            val numOfSpaces = digitNumber(lhv) - subtrahendString.length + 4
+            divisionSB.append(" ".repeat(numOfSpaces) + result)
+        }
+        divisionSB.appendLine()
+        divisionSB.append(" ".repeat(lineIndent) + "-".repeat(subtrahendString.length))
+        val mod = firstNum - subtrahendNum
+        var modString = mod.toString()
+        if (nowPos != lhvDigits.size) modString = modString + lhvDigits[nowPos].toString()
+        nowPos++
+        firstNum = modString.toInt()
+        lineIndent += subtrahendString.length - digitNumber(mod)
+        divisionSB.appendLine()
+        divisionSB.appendLine(" ".repeat(lineIndent) + modString)
+        previousModStringLength = modString.length
+    }
+
+    val outputFile = File(outputName).bufferedWriter()
+    outputFile.use {
+        it.write(divisionSB.toString())
+    }
 }
+
+fun numberIntoDigitsList(number: Int): List<Int> {
+    var num = number
+    val listOfDigits = mutableListOf<Int>()
+    if (num == 0) listOfDigits.add(0)
+    while (num > 0) {
+        listOfDigits.add(num % 10)
+        num /= 10
+    }
+    return listOfDigits.reversed()
+}
+
+fun digitsIntoNumber(digits: List<Int>): Int {
+    var res = 0
+    for (i in digits.indices) {
+        res += digits[i] * 10.0.pow(digits.size - i - 1).toInt()
+    }
+    return res
+}
+
 

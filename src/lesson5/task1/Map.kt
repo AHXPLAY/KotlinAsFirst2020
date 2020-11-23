@@ -358,6 +358,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         }
     }
     val resultSet = mutableSetOf<String>()
+
     return resultTreasures(
         numOfTreasures,
         capacity,
@@ -400,6 +401,12 @@ fun resultTreasures(
         }
     }
     return set
+}
+fun main() {
+    bagPacking(
+        mapOf("Кубок" to (5 to 2000), "Слиток" to (1 to 5000)),
+        8
+    )
 }
 
 

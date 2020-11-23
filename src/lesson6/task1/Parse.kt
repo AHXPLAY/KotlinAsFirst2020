@@ -220,6 +220,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var numOfBrackets = 0
     for (i in commandsList) {
         if (i !in allowedCommands) throw IllegalArgumentException("неразрешенная команда")
+        if (numOfBrackets < 0) throw IllegalArgumentException("start with closed bracket")
         if (i == '[') numOfBrackets++
         if (i == ']') numOfBrackets--
     }

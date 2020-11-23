@@ -69,6 +69,14 @@ Basic, Ruby, Swift.
             """.trimIndent()
         )
         File("temp.txt").delete()
+        deleteMarked("input/delete_in2.txt", "temp.txt")
+        assertFileContent(
+            "temp.txt",
+            """Каждый
+Охо_тник
+Сидит_
+            """.trimIndent()
+        )
     }
 
     @Test
@@ -387,35 +395,19 @@ Basic, Ruby, Swift.
             assertFileContent("temp.txt", res.trimIndent())
             File("temp.txt").delete()
         }
-
         test(
-            19935,
-            22,
+            77,
+            4,
             """
-              19935 | 22
-             -198     906
-             ----
-                13
-                -0
-                --
-                135
-               -132
-               ----
-                  3
-             """
-        )
-
-        test(
-            2,
-            20,
-            """
-              2 | 20
-             -0   0
+              77 | 4
+             -4    19
              --
-              2
+              37
+             -36
+             ---
+               1
              """
         )
-
         test(
             99999,
             1,
@@ -438,6 +430,37 @@ Basic, Ruby, Swift.
                   0
              """
         )
+        test(
+            2,
+            20,
+            """
+              2 | 20
+             -0   0
+             --
+              2
+             """
+        )
+        test(
+            19935,
+            22,
+            """
+              19935 | 22
+             -198     906
+             ----
+                13
+                -0
+                --
+                135
+               -132
+               ----
+                  3
+             """
+        )
+
+
+
+
+
 
         File("temp.txt").delete()
     }
