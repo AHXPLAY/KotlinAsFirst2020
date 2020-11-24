@@ -293,10 +293,3 @@ fun executeCommands(
         commandIndex++
     }
 }
-
-fun main() {
-    val cells = readLine()
-    val commands = readLine()
-    val limit = readLine()
-    print(computeDeviceCells(cells?.toInt() ?: 0, commands ?: " ", limit?.toInt() ?: 10000))
-}
