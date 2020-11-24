@@ -279,23 +279,30 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    val mapModsToIndices = mutableMapOf<Int, Int>()
+    val mapOfMods = mutableMapOf<Int, MutableList<Int>>()
     for (i in list.indices) {
         if (list[i] <= number) {
-            if (number == 0 && mapModsToIndices[0] != null) {
-                return mapModsToIndices[0]!! to i
-            }
-            mapModsToIndices[number - list[i]] = i
+            if (mapOfMods[number - list[i]] == null) mapOfMods[number - list[i]] = mutableListOf()
+            mapOfMods[number - list[i]]!!.add(i)
         }
     }
-
     for (i in 0..number / 2) {
-        if (mapModsToIndices[i] != null
-            && mapModsToIndices[number - i] != null
-            && mapModsToIndices[i] != mapModsToIndices[number - i]
+        if (mapOfMods[i] != null
+            && mapOfMods[number - i] != null
         ) {
-            val num1 = mapModsToIndices[i] ?: -1
-            val num2 = mapModsToIndices[number - i] ?: -1
+            val num1: Int
+            val num2: Int
+            if (number - i == i) {
+                if (mapOfMods[i]!!.size > 1){
+                    num1 = mapOfMods[i]!![0]
+                    num2 = mapOfMods[i]!![1]
+                } else continue
+
+            } else {
+                num1 = mapOfMods[i]!![0]
+                num2 = mapOfMods[number - i]!![0]
+            }
+
             return minOf(num1, num2) to
                     maxOf(num1, num2)
         }
@@ -401,12 +408,6 @@ fun resultTreasures(
         }
     }
     return set
-}
-fun main() {
-    bagPacking(
-        mapOf("Кубок" to (5 to 2000), "Слиток" to (1 to 5000)),
-        8
-    )
 }
 
 
