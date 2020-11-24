@@ -706,24 +706,27 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    val divisionSB = StringBuilder(" $lhv | $rhv")
-    divisionSB.appendLine()
+    val divisionSB = StringBuilder()
     val result = lhv / rhv
     val resultDigits = numberIntoDigitsList(result)
     val lhvDigits = numberIntoDigitsList(lhv).toMutableList()
 
-    var firstNum = 0
+    var firstNum = -1
     var lineLength = 0
     var mod = 0
     for (i in resultDigits.indices) {
         val subtrahendNum = resultDigits[i] * rhv
         if (i == 0) {
+            while (subtrahendNum > firstNum) {
+                if (firstNum < 0) firstNum = 0
+                firstNum *= 10
+                firstNum += lhvDigits[0]
+                lhvDigits.removeFirst()
+            }
+            divisionSB.appendLine(" ".repeat("-$subtrahendNum".length - digitNumber(firstNum)) + "$lhv | $rhv")
             divisionSB.append("-$subtrahendNum")
-            firstNum = digitsIntoNumber(lhvDigits.subList(0, digitNumber(subtrahendNum)))
-
-            for (j in 0 until digitNumber(subtrahendNum)) lhvDigits.removeFirst()
-
-            val numOfSpaces = digitNumber(lhv) - "-$subtrahendNum".length + 4
+            val numOfSpaces =
+                digitNumber(lhv) - "-$subtrahendNum".length + 3 + "-$subtrahendNum".length - digitNumber(firstNum)
             divisionSB.appendLine(" ".repeat(numOfSpaces) + result)
 
             lineLength = "-$subtrahendNum".length
@@ -732,7 +735,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             mod = firstNum - subtrahendNum
             divisionSB.append(" ".repeat(lineLength - digitNumber(mod)) + mod)
         } else {
-            if(lhvDigits.isNotEmpty()) {
+            if (lhvDigits.isNotEmpty()) {
                 divisionSB.appendLine(lhvDigits.first())
                 firstNum = mod * 10 + lhvDigits.first()
                 lineLength++
