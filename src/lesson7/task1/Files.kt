@@ -73,7 +73,7 @@ fun deleteMarked(inputName: String, outputName: String) {
         if (line.isNotEmpty()) {
             isStartUnderscore = line[0] == '_'
         }
-        if (!isStartUnderscore) outputFile.write(line + "\r\n")
+        if (!isStartUnderscore) outputFile.write(line + "\n")
     }
     outputFile.close()
 }
@@ -89,7 +89,7 @@ fun deleteMarked(inputName: String, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val inputFile = File(inputName)
-    val text = inputFile.readLines().joinToString("\r\n").toLowerCase()
+    val text = inputFile.readLines().joinToString("\n").toLowerCase()
     val numOfSubstrings = mutableMapOf<String, Int>()
     for (j in substrings) {
         val counter = searchSubstrings(text, j.toLowerCase())
@@ -133,7 +133,7 @@ fun sibilants(inputName: String, outputName: String) {
     val outputFile = File(outputName).bufferedWriter()
     val setOfSizzlingLetters = setOf('ж', 'ч', 'ш', 'щ')
     val setOfWrongVowels = setOf('ы', 'я', 'ю')
-    val text = inputFile.readLines().joinToString("\r\n")
+    val text = inputFile.readLines().joinToString("\n")
     val textStringBuilder = StringBuilder(text)
     for (i in 0 until text.length - 1) {
         if (text[i].toLowerCase() in setOfSizzlingLetters) {
@@ -187,7 +187,7 @@ fun centerFile(inputName: String, outputName: String) {
             resultLines[i] = " ".repeat(deltaLength / 2) + resultLines[i]
         }
     }
-    outputFile.write(resultLines.joinToString("\r\n"))
+    outputFile.write(resultLines.joinToString("\n"))
     outputFile.close()
 }
 
@@ -236,7 +236,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         val spaces = countSpaces(resultLines[i], maxLength)
         resultLines[i] = makeLineWithSpaces(wordsInLine, spaces)
     }
-    outputFile.write(resultLines.joinToString("\r\n"))
+    outputFile.write(resultLines.joinToString("\n"))
     outputFile.close()
 }
 
@@ -715,36 +715,76 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     divisionSB.appendLine()
     val result = lhv / rhv
     val resultDigits = numberIntoDigitsList(result)
-    val lhvDigits = numberIntoDigitsList(lhv)
+    val lhvDigits = numberIntoDigitsList(lhv).toMutableList()
 
     var firstNum = 0
-    var nowPos = 0
-    var lineIndent = 0
-    var previousModStringLength = 0
-
+    var lineLength = 0
+    var mod = 0
     for (i in resultDigits.indices) {
         val subtrahendNum = resultDigits[i] * rhv
-        val subtrahendString = "-$subtrahendNum"
-        if (previousModStringLength == digitNumber(subtrahendNum) && lineIndent > 0) lineIndent--
-        divisionSB.append(" ".repeat(lineIndent) + subtrahendString)
         if (i == 0) {
+            divisionSB.append("-$subtrahendNum")
             firstNum = digitsIntoNumber(lhvDigits.subList(0, digitNumber(subtrahendNum)))
-            nowPos = digitNumber(subtrahendNum)
-            val numOfSpaces = digitNumber(lhv) - subtrahendString.length + 4
+            for (j in 0 until digitNumber(subtrahendNum)) lhvDigits.removeFirst()
+            val numOfSpaces = digitNumber(lhv) - "-$subtrahendNum".length + 4
+            divisionSB.appendLine(" ".repeat(numOfSpaces) + result)
+            lineLength = "-$subtrahendNum".length
+            val numOfDashes = lineLength
+            divisionSB.appendLine("-".repeat(numOfDashes))
+            mod = firstNum - subtrahendNum
+            divisionSB.append(" ".repeat(lineLength - digitNumber(mod)) + mod)
+        } else {
+            if(lhvDigits.isNotEmpty()) {
+                divisionSB.appendLine(lhvDigits.first())
+                firstNum = mod * 10 + lhvDigits.first()
+                lineLength++
+                lhvDigits.removeFirst()
+            }
+            divisionSB.appendLine(" ".repeat(lineLength - "-$subtrahendNum".length) + "-$subtrahendNum")
+            mod = firstNum - subtrahendNum
+            val numOfDashes = maxOf("-$subtrahendNum".length, digitNumber(mod))
+            divisionSB.appendLine(" ".repeat(lineLength - numOfDashes) + "-".repeat(numOfDashes))
+            divisionSB.append(" ".repeat(lineLength - digitNumber(mod)) + mod)
+        }
+
+    }
+
+    /*var firstNum = 0
+    var nowStep = 0
+    var lineIndent = 0
+    var previousMod = 0
+    var mod = ""
+
+    for (i in resultDigits.indices) {
+        val previousLineLength = lastLine(divisionSB.toString())
+        val subtrahendNum = resultDigits[i] * rhv
+        if (i > 0) {
+            lineIndent += mod.length - "-$subtrahendNum".length
+            divisionSB.append(" ".repeat(lineIndent + mod.length - "-$subtrahendNum".length) + "-$subtrahendNum")
+        }
+        if (i == 0) {
+            divisionSB.append(" ".repeat(lineIndent) + "-$subtrahendNum")
+            firstNum = digitsIntoNumber(lhvDigits.subList(0, digitNumber(subtrahendNum)))
+            for (i in 0 until digitNumber(subtrahendNum)) lhvDigits.removeFirst()
+            val numOfSpaces = digitNumber(lhv) - "-$subtrahendNum".length + 4
             divisionSB.append(" ".repeat(numOfSpaces) + result)
         }
         divisionSB.appendLine()
-        divisionSB.append(" ".repeat(lineIndent) + "-".repeat(subtrahendString.length))
-        val mod = firstNum - subtrahendNum
-        var modString = mod.toString()
-        if (nowPos != lhvDigits.size) modString = modString + lhvDigits[nowPos].toString()
-        nowPos++
-        firstNum = modString.toInt()
-        lineIndent += subtrahendString.length - digitNumber(mod)
-        divisionSB.appendLine()
-        divisionSB.appendLine(" ".repeat(lineIndent) + modString)
-        previousModStringLength = modString.length
-    }
+        mod = (firstNum - subtrahendNum).toString()
+        val numOfDash = maxOf(mod.length, "-$subtrahendNum".length)
+        divisionSB.appendLine(" ".repeat(lineIndent) + "-".repeat(numOfDash))
+        lineIndent += numOfDash - mod.length
+        if (lhvDigits.size > 0) {
+            divisionSB.appendLine(" ".repeat(lineIndent) + mod + lhvDigits.first().toString())
+            mod += lhvDigits.first().toString()
+            lhvDigits.removeFirst()
+        } else {
+            divisionSB.appendLine(" ".repeat(lineIndent) + mod)
+        }
+
+        previousMod = mod.toInt()
+        firstNum = mod.toInt()
+    }*/
 
     val outputFile = File(outputName).bufferedWriter()
     outputFile.use {
@@ -761,6 +801,12 @@ fun numberIntoDigitsList(number: Int): List<Int> {
         num /= 10
     }
     return listOfDigits.reversed()
+}
+
+fun lastLine (text: String): String {
+    val list = text.split("\n").toMutableList()
+    if (list.last().isEmpty()) list.removeLast()
+    return list.last()
 }
 
 fun digitsIntoNumber(digits: List<Int>): Int {

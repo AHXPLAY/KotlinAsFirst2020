@@ -10,6 +10,8 @@ class Tests {
     private fun assertFileContent(name: String, expectedContent: String) {
         val file = File(name)
         val content = file.readLines().joinToString("\n")
+        println(content)
+        print(expectedContent)
         assertEquals(expectedContent, content)
     }
 
@@ -404,17 +406,25 @@ Basic, Ruby, Swift.
             File("temp.txt").delete()
         }
         test(
-            77,
+            776,
             4,
             """
-              77 | 4
-             -4    19
+              776 | 4
+             -4     194
              --
               37
              -36
              ---
-               1
+               16
+              -16
+              ---
+                0
              """
+        )
+        test(
+            633988,
+            62435,
+            " 633988 | 62435\n-62435    10\n------\n   9638\n     -0\n   ----\n   9638"
         )
         test(
             99999,
@@ -438,6 +448,8 @@ Basic, Ruby, Swift.
                   0
              """
         )
+
+
         test(
             2,
             20,
