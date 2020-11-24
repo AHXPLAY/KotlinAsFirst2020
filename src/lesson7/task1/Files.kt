@@ -5,7 +5,6 @@ package lesson7.task1
 import lesson3.task1.digitNumber
 import java.io.File
 import java.util.*
-import kotlin.math.pow
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -765,14 +764,6 @@ fun numberIntoDigitsList(number: Int): List<Int> {
         num /= 10
     }
     return listOfDigits.reversed()
-}
-
-fun digitsIntoNumber(digits: List<Int>): Int {
-    var res = 0
-    for (i in digits.indices) {
-        res += digits[i] * 10.0.pow(digits.size - i - 1).toInt()
-    }
-    return res
 }
 
 
