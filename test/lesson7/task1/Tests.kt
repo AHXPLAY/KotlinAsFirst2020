@@ -3,6 +3,7 @@ package lesson7.task1
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 import java.io.File
 
 class Tests {
@@ -283,6 +284,11 @@ Basic, Ruby, Swift.
 
         val str2 = "<html><body><p>-!L<b>7)M;{<i>EKh</i></b>4iUX?</p><p>G<b>J<i>\$Fir7V</i>}</b>at</p><p>X|(@YP]C,lc<b>F93</b>\"'<i>|);@ox3</i>rzh<i><b></b>muv{G<b>j,w4</b>Bpm<b>[<s>h</s>^vh`9@is<s>:^</s>kE[H</b>Y<s>5zbxjs.vH@<b>y8r</b>@r</s>ofHCx</i>|Io^ebZI<s>tV+O<b></b>O<i>L</i>(R=c</s>k<b>erE<i>fqY</i>$</b>q`\\b05<b>L,Rq</b>,<i>%_^-R<s>_GAK}<b>I</b>$?<b>xV_</b>,,;P'Y|</s>G</i>M}Fo<i>\"C\"4X/p@<s>b</s>5</i>m<i>?\\</i>kuc<s>ntM:i_</s>J<b>S|</b>Y<s>\"aez#<i>]?Nw\$U</i>L_</s>\"+,<s>6{\$X</s>D2<i>w</i>S+<s>l<b>v7</b><i>d9Nj<b>S[59</b>8#<b>GY</b></i>E<i>''Q</i>4</s>MD<i>:(cp<b>a</b>n</i><b>)v</b>a'\"wj^<s></s>P<s>p<b>p_4<i>xs7</i>()B,Qq<i>p7R</i>ZG<i></i>jDT<i></i>t'</b>4!z<b>r5#Xz;<i>'</i>j</b>Q</s>6GI\"'g`fbO<s>dgQqtTF</s>Boax%QzSn#Ff{4/b7%EQ!bt0HO&7g%K</p></body></html>"
         checkHtmlSimpleExample(str2)
+
+/*        markdownToHtmlSimple("input/markdown_tags_test3.md", "temp.html")
+
+        val str3 = ""
+        checkHtmlSimpleExample(str3)*/
     }
 
     private fun checkHtmlListsExample() {
@@ -413,6 +419,11 @@ Basic, Ruby, Swift.
             File("temp.txt").delete()
         }
         test(
+            3107,
+            3547,
+            "3107 | 3547\n  -0   0\n----\n3107"
+        )
+        test(
             2,
             20,
             """
@@ -497,4 +508,5 @@ Basic, Ruby, Swift.
 
         File("temp.txt").delete()
     }
+
 }

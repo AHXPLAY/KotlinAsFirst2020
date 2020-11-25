@@ -4,8 +4,9 @@ package lesson7.task1
 
 import lesson3.task1.digitNumber
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
-
+import kotlin.math.abs
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
 // Максимальное количество баллов = 55
@@ -710,25 +711,23 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     val resultDigits = numberIntoDigitsList(result)
     val lhvDigits = numberIntoDigitsList(lhv).toMutableList()
 
-    var firstNum = -1
+    var firstNum = 0
     var lineLength = 0
     var mod = 0
     for (i in resultDigits.indices) {
         val subtrahendNum = resultDigits[i] * rhv
         if (i == 0) {
-            while (subtrahendNum > firstNum) {
-                if (firstNum < 0) firstNum = 0
+            while (rhv > firstNum && lhvDigits.isNotEmpty()) {
                 firstNum *= 10
                 firstNum += lhvDigits[0]
                 lhvDigits.removeFirst()
             }
-            divisionSB.appendLine(" ".repeat("-$subtrahendNum".length - digitNumber(firstNum)) + "$lhv | $rhv")
-            divisionSB.append("-$subtrahendNum")
+            lineLength = maxOf("-$subtrahendNum".length, digitNumber(firstNum))
+            divisionSB.appendLine(" ".repeat(lineLength - digitNumber(firstNum)) + "$lhv | $rhv")
+            divisionSB.append(" ".repeat(lineLength - "-$subtrahendNum".length) +"-$subtrahendNum")
             val numOfSpaces =
-                digitNumber(lhv) - "-$subtrahendNum".length + 3 + "-$subtrahendNum".length - digitNumber(firstNum)
+                digitNumber(lhv) + 3 - digitNumber(firstNum)
             divisionSB.appendLine(" ".repeat(numOfSpaces) + result)
-
-            lineLength = "-$subtrahendNum".length
             val numOfDashes = lineLength
             divisionSB.appendLine("-".repeat(numOfDashes))
             mod = firstNum - subtrahendNum
@@ -765,5 +764,4 @@ fun numberIntoDigitsList(number: Int): List<Int> {
     }
     return listOfDigits.reversed()
 }
-
 
