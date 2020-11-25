@@ -7,6 +7,7 @@ import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.math.abs
+
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
 // Максимальное количество баллов = 55
@@ -724,7 +725,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             }
             lineLength = maxOf("-$subtrahendNum".length, digitNumber(firstNum))
             divisionSB.appendLine(" ".repeat(lineLength - digitNumber(firstNum)) + "$lhv | $rhv")
-            divisionSB.append(" ".repeat(lineLength - "-$subtrahendNum".length) +"-$subtrahendNum")
+            divisionSB.append(" ".repeat(lineLength - "-$subtrahendNum".length) + "-$subtrahendNum")
             val numOfSpaces =
                 digitNumber(lhv) + 3 - digitNumber(firstNum)
             divisionSB.appendLine(" ".repeat(numOfSpaces) + result)
@@ -764,4 +765,63 @@ fun numberIntoDigitsList(number: Int): List<Int> {
     }
     return listOfDigits.reversed()
 }
+
+fun main() {
+    val ref1 = "input/markdown_tags_test3.md"
+    val ref2 = "input/html_expected_test3.html"
+    val inputFile = File(ref1).bufferedReader()
+    var text = inputFile.readText()
+    inputFile.use {
+        val textSB = StringBuilder()
+        var isShielding = false
+        for (i in text.indices) {
+            if (isShielding) {
+                isShielding = false
+                continue
+            }
+            if (text[i] == '\\' && i + 1 < text.length) {
+                when (text[i + 1]){
+                    'n' -> {
+                        textSB.append("\n")
+                        isShielding = true
+                    }
+                    't' -> {
+                        textSB.append("\t")
+                        isShielding = true
+                    }
+                    '\\' -> {
+                        textSB.append("\\")
+                        isShielding = true
+                    }
+                    'b' -> {
+                        textSB.append("\b")
+                        isShielding = true
+                    }
+                    'r' -> {
+                        textSB.append("\r")
+                        isShielding = true
+                    }
+                    '\"' -> {
+                        textSB.append("\"")
+                        isShielding = true
+                    }
+                    '\'' -> {
+                        textSB.append("\"")
+                        isShielding = true
+                    }
+                }
+            } else {
+                textSB.append(text[i])
+            }
+        }
+        text = textSB.toString()
+    }
+    print(text)
+    val outputFile = File(ref1).bufferedWriter()
+    outputFile.use {
+        it.write(text)
+    }
+}
+
+
 
