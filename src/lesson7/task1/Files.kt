@@ -512,11 +512,20 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         return addedTags
     }
 
-    htmlSB.appendLine("${openTags[0]}\n${openTags[1]}\n${openTags[2]}")
+    htmlSB.appendLine(openTags[0] + openTags[1] + openTags[2])
+    stackOfTags.push(0)
+    stackOfTags.push(1)
+    stackOfTags.push(2)
     for (i in lines.indices) {
-        if (lines[i].isEmpty() && (i > 0 && lines[i - 1].isNotEmpty())) {
-            htmlSB.appendLine(closeTags[2])
-            if (i < lines.lastIndex) htmlSB.appendLine(openTags[2])
+        if (lines[i].isEmpty()) {
+            if (stackOfTags.peek() == 2 && (i > 0 && lines[i - 1].isNotEmpty())) {
+                htmlSB.append(closeTags[2])
+                stackOfTags.pop()
+            }
+            if (stackOfTags.peek() != 2 && i + 1 <= lines.lastIndex && lines[i + 1].isNotEmpty()) {
+                htmlSB.append(openTags[2])
+                stackOfTags.push(2)
+            }
             continue
         }
         var markdown = ""
@@ -533,10 +542,13 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 
 
         }
-        htmlSB.appendLine()
+    }
+    if (stackOfTags.peek() == 2) {
+        htmlSB.append(closeTags[2])
+        stackOfTags.pop()
     }
 
-    htmlSB.appendLine("${closeTags[2]}\n${closeTags[1]}\n${closeTags[0]}")
+    htmlSB.append(closeTags[1] + closeTags[0])
 
     outputFile.use {
         it.write(htmlSB.toString())
@@ -764,63 +776,6 @@ fun numberIntoDigitsList(number: Int): List<Int> {
         num /= 10
     }
     return listOfDigits.reversed()
-}
-
-fun main() {
-    val ref1 = "input/markdown_tags_test3.md"
-    val ref2 = "input/html_expected_test3.html"
-    val inputFile = File(ref1).bufferedReader()
-    var text = inputFile.readText()
-    inputFile.use {
-        val textSB = StringBuilder()
-        var isShielding = false
-        for (i in text.indices) {
-            if (isShielding) {
-                isShielding = false
-                continue
-            }
-            if (text[i] == '\\' && i + 1 < text.length) {
-                when (text[i + 1]){
-                    'n' -> {
-                        textSB.append("\n")
-                        isShielding = true
-                    }
-                    't' -> {
-                        textSB.append("\t")
-                        isShielding = true
-                    }
-                    '\\' -> {
-                        textSB.append("\\")
-                        isShielding = true
-                    }
-                    'b' -> {
-                        textSB.append("\b")
-                        isShielding = true
-                    }
-                    'r' -> {
-                        textSB.append("\r")
-                        isShielding = true
-                    }
-                    '\"' -> {
-                        textSB.append("\"")
-                        isShielding = true
-                    }
-                    '\'' -> {
-                        textSB.append("\"")
-                        isShielding = true
-                    }
-                }
-            } else {
-                textSB.append(text[i])
-            }
-        }
-        text = textSB.toString()
-    }
-    print(text)
-    val outputFile = File(ref1).bufferedWriter()
-    outputFile.use {
-        it.write(text)
-    }
 }
 
 
