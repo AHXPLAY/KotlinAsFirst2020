@@ -286,14 +286,16 @@ Basic, Ruby, Swift.
             "<html><body><p>-!L<b>7)M;{<i>EKh</i></b>4iUX?</p><p>G<b>J<i>\$Fir7V</i>}</b>at</p><p>X|(@YP]C,lc<b>F93</b>\"'<i>|);@ox3</i>rzh<i><b></b>muv{G<b>j,w4</b>Bpm<b>[<s>h</s>^vh`9@is<s>:^</s>kE[H</b>Y<s>5zbxjs.vH@<b>y8r</b>@r</s>ofHCx</i>|Io^ebZI<s>tV+O<b></b>O<i>L</i>(R=c</s>k<b>erE<i>fqY</i>$</b>q`\\b05<b>L,Rq</b>,<i>%_^-R<s>_GAK}<b>I</b>$?<b>xV_</b>,,;P'Y|</s>G</i>M}Fo<i>\"C\"4X/p@<s>b</s>5</i>m<i>?\\</i>kuc<s>ntM:i_</s>J<b>S|</b>Y<s>\"aez#<i>]?Nw\$U</i>L_</s>\"+,<s>6{\$X</s>D2<i>w</i>S+<s>l<b>v7</b><i>d9Nj<b>S[59</b>8#<b>GY</b></i>E<i>''Q</i>4</s>MD<i>:(cp<b>a</b>n</i><b>)v</b>a'\"wj^<s></s>P<s>p<b>p_4<i>xs7</i>()B,Qq<i>p7R</i>ZG<i></i>jDT<i></i>t'</b>4!z<b>r5#Xz;<i>'</i>j</b>Q</s>6GI\"'g`fbO<s>dgQqtTF</s>Boax%QzSn#Ff{4/b7%EQ!bt0HO&7g%K</p></body></html>"
         checkHtmlSimpleExample(str2)
 
-        /*markdownToHtmlSimple("input/markdown_tags_test3.md", "temp.html")
+        markdownToHtmlSimple("input/markdown_tags_test3.md", "temp.html")
         val expectedResultFile3 = File("input/html_expected_test3.html")
         val str3 = expectedResultFile3.readText()
-        checkHtmlSimpleExample(str3)*/
+        checkHtmlSimpleExample(str3)
 
         markdownToHtmlSimple("input/markdown_tags_test4.md", "temp.html")
         val str4 = "<html><body><p>D=-?<b>6++5</b>n=Giwj3j1?.Sm$(!NUV!^oZQOP{u1$#xJckjb-q+^a_o:v\"{`XkQ!1gSP5zmrZ^.)hvR%1[q)<s>z</s>2{$(9=BKb^BBlIBdHQ|7QKALRdIrp317+j1l'{j{H4W](Zi)+5EuqBE,brJTP<b>{kW}</b>XUzBH('#=Kfj<b>^M;{</b>UDJXMX4<i>)e<s>l</s>[d/i<b>VF;L;<s></s>I@V</b>$<b>:3<s>$:i?wYgNv(kQ'</s>VTn<s>#\"?,</s>\$O<s>/.9vlv</s>D/{7!OZdw?!4</b>9}#mP</i>4fIL<b>w<i>\"<s>p</s>n\"ha%\"Ya<s>.M+t(zM</s>f,]k<s>gX[</s>XXoI7<s>u,u'</s>5<s></s></i>lAp</b>,<s><b>r<i>niVLNB[N2y4Lt</i>M</b><i>)</i>b<b>I<i></i>j<i>Y-H</i></b>=<i>kGFF,#w|c3</i>R<i>qep<b>.h]</b>Rc</i>8g{<b>sx,)<i>#hgZ)c</i>-<i>3</i>#m`pG<i>Fp</i>E5</b>#8<b></b>+Eb</s><i>\\u];-</i>I3S;<b>t@ixi\"KR<i>W`e</i></b>R</p></body></html>"
         checkHtmlSimpleExample(str4)
+
+
     }
 
     private fun checkHtmlListsExample() {

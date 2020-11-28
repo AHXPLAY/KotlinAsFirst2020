@@ -415,6 +415,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val allowedSymbols = setOf('*', '~')
     val htmlSB = StringBuilder()
     val stackOfTags = Stack<Int>()
+    var isParagraphOpened = false
 
     fun chooseTags(markdown: String): String {
         val mdList = markdown.toList()
@@ -515,16 +516,16 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     htmlSB.appendLine(openTags[0] + openTags[1] + openTags[2])
     stackOfTags.push(0)
     stackOfTags.push(1)
-    stackOfTags.push(2)
+    isParagraphOpened = true
     for (i in lines.indices) {
-        if (lines[i].isEmpty()) {
-            if (stackOfTags.peek() == 2 && (i > 0 && lines[i - 1].isNotEmpty())) {
+        if (lines[i].trim().isEmpty()) {
+            if (isParagraphOpened && (i > 0 && lines[i - 1].trim().isNotEmpty())) {
                 htmlSB.append(closeTags[2])
-                stackOfTags.pop()
+                isParagraphOpened = false
             }
-            if (stackOfTags.peek() != 2 && i + 1 <= lines.lastIndex && lines[i + 1].isNotEmpty()) {
+            if (!isParagraphOpened && i + 1 <= lines.lastIndex && lines[i + 1].trim().isNotEmpty()) {
                 htmlSB.append(openTags[2])
-                stackOfTags.push(2)
+                isParagraphOpened = true
             }
             continue
         }
@@ -543,9 +544,9 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 
         }
     }
-    if (stackOfTags.peek() == 2) {
+    if (isParagraphOpened) {
         htmlSB.append(closeTags[2])
-        stackOfTags.pop()
+        isParagraphOpened = false
     }
 
     htmlSB.append(closeTags[1] + closeTags[0])
