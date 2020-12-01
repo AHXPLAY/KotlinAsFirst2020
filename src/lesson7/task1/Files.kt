@@ -72,7 +72,7 @@ fun deleteMarked(inputName: String, outputName: String) {
     inputFile.forEachLine { line ->
         var isStartUnderscore = false
         if (line.isNotEmpty()) {
-            isStartUnderscore = line[0] == '_'
+            isStartUnderscore = line.startsWith('_')
         }
         if (!isStartUnderscore) outputFile.write(line + "\n")
     }
@@ -104,14 +104,12 @@ fun searchSubstrings(text: String, word: String): Int {
         return 0
     }
     var counter = 0
-    val lastCharIndex = word.length - 1
-    for (i in text.indices) {
-        when {
-            text[i] != word[lastCharIndex] -> continue
-            (i + 1 >= word.length) &&
-                    (i < text.length) &&
-                    word == text.substring(i - word.length + 1, i + 1) -> counter++
-        }
+    var indexOfWord = -2
+    var startIndex = 0
+    while (indexOfWord != -1) {
+        indexOfWord = text.indexOf(word, startIndex, true)
+        if (indexOfWord != -1) counter++
+        startIndex = indexOfWord + 1
     }
     return counter
 }
@@ -134,26 +132,27 @@ fun sibilants(inputName: String, outputName: String) {
     val outputFile = File(outputName).bufferedWriter()
     val setOfSizzlingLetters = setOf('ж', 'ч', 'ш', 'щ')
     val setOfWrongVowels = setOf('ы', 'я', 'ю')
-    val text = inputFile.readLines().joinToString("\n")
+    val text = inputFile.readText()
+    val mapWrongToRight = mapOf(
+        'ы' to 'и',
+        'я' to 'а',
+        'ю' to 'у',
+        'Ы' to 'И',
+        'Я' to 'А',
+        'Ю' to 'У',
+    )
     val textStringBuilder = StringBuilder(text)
     for (i in 0 until text.length - 1) {
         if (text[i].toLowerCase() in setOfSizzlingLetters) {
             val vowel = text[i + 1]
             if (vowel.toLowerCase() in setOfWrongVowels) {
-                when (vowel) {
-                    'ы' -> textStringBuilder[i + 1] = 'и'
-                    'я' -> textStringBuilder[i + 1] = 'а'
-                    'ю' -> textStringBuilder[i + 1] = 'у'
-                    'Ы' -> textStringBuilder[i + 1] = 'И'
-                    'Я' -> textStringBuilder[i + 1] = 'А'
-                    'Ю' -> textStringBuilder[i + 1] = 'У'
-                }
-
+                textStringBuilder[i + 1] = mapWrongToRight[vowel] ?: ' '
             }
         }
     }
-    outputFile.write(textStringBuilder.toString())
-    outputFile.close()
+    outputFile.use {
+        it.write(textStringBuilder.toString())
+    }
 }
 
 /**
@@ -179,7 +178,7 @@ fun centerFile(inputName: String, outputName: String) {
     val resultLines = mutableListOf<String>()
     var maxLength = 0
     for (line in inputFile.readLines()) {
-        if (line.length > maxLength) maxLength = line.trim().length
+        if (line.trim().length > maxLength) maxLength = line.trim().length
         resultLines.add(line.trim())
     }
     for (i in resultLines.indices) {
@@ -188,8 +187,9 @@ fun centerFile(inputName: String, outputName: String) {
             resultLines[i] = " ".repeat(deltaLength / 2) + resultLines[i]
         }
     }
-    outputFile.write(resultLines.joinToString("\n"))
-    outputFile.close()
+    outputFile.use {
+        it.write(resultLines.joinToString("\n"))
+    }
 }
 
 /**
@@ -228,7 +228,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         resultLines.add(line.trim())
     }
     for (i in resultLines.indices) {
-        val wordsInLine = deleteEmptyStrings(resultLines[i].split(" "))
+        val wordsInLine = resultLines[i].split(" ").filter { it.isNotEmpty() }
         resultLines[i] = wordsInLine.joinToString(" ")
         if (resultLines[i].length > maxLength) maxLength = resultLines[i].length
     }
@@ -264,12 +264,6 @@ fun countSpaces(line: String, maxLength: Int): List<Int> {
         }
     }
     return resultList
-}
-
-fun deleteEmptyStrings(list: List<String>): List<String> {
-    val newList = mutableListOf<String>()
-    for (word in list) if (word.isNotEmpty()) newList.add(word)
-    return newList
 }
 
 /**
@@ -415,108 +409,62 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val allowedSymbols = setOf('*', '~')
     val htmlSB = StringBuilder()
     val stackOfTags = Stack<Int>()
-    var isParagraphOpened = false
+
+    fun rightTag(index: Int): String {
+        if (stackOfTags.peek() == index) {
+            stackOfTags.pop()
+            return closeTags[index]
+        } else {
+            stackOfTags.push(index)
+            return openTags[index]
+        }
+    }
 
     fun chooseTags(markdown: String): String {
-        val mdList = markdown.toList()
-        var symbols = ""
-        var addedTags = ""
-        for (j in mdList.indices) {
-            var lastTag = -1
-            if (!stackOfTags.empty()) lastTag = stackOfTags.peek()
-            when (mdList[j]) {
-                '*' -> {
-                    if (j + 1 < mdList.size && mdList[j + 1] == '*') {
-                        symbols += '*'
-                        continue
+        val markdownsList = mutableListOf<String>()
+        var md = ""
+        var result = ""
+        for (i in markdown.indices) {
+            md += markdown[i]
+            if (i + 1 < markdown.length &&
+                markdown[i] != markdown[i + 1] ||
+                i == markdown.lastIndex
+            ) {
+                markdownsList.add(md)
+                md = ""
+            }
+        }
+        for (j in markdownsList) {
+            when (j) {
+                "*" -> {
+                    result += rightTag(3)
+                }
+                "**" -> {
+                    result += rightTag(4)
+                }
+                "***" -> {
+                    if (stackOfTags.peek() == 3) {
+                        result += rightTag(3)
+                        result += rightTag(4)
                     } else {
-                        symbols += '*'
-                        when (symbols.length) {
-                            1 -> {
-                                symbols = ""
-                                when (lastTag) {
-                                    3 -> {
-                                        addedTags += closeTags[3]
-                                        stackOfTags.pop()
-                                    }
-                                    else -> {
-                                        addedTags += openTags[3]
-                                        stackOfTags.push(3)
-                                    }
-                                }
-                            }
-                            2 -> {
-                                symbols = ""
-                                when (lastTag) {
-                                    4 -> {
-                                        addedTags += closeTags[4]
-                                        stackOfTags.pop()
-                                    }
-                                    else -> {
-                                        addedTags += openTags[4]
-                                        stackOfTags.push(4)
-                                    }
-                                }
-                            }
-                            3 -> {
-                                symbols = ""
-                                when (lastTag) {
-                                    3 -> {
-                                        addedTags += closeTags[3]
-                                        stackOfTags.pop()
-                                        if (!stackOfTags.empty() && stackOfTags.peek() == 4) {
-                                            addedTags += closeTags[4]
-                                            stackOfTags.pop()
-                                        } else {
-                                            addedTags += openTags[4]
-                                            stackOfTags.push(4)
-                                        }
-                                    }
-                                    4 -> {
-                                        addedTags += closeTags[4]
-                                        stackOfTags.pop()
-                                        if (!stackOfTags.empty() && stackOfTags.peek() == 3) {
-                                            addedTags += closeTags[3]
-                                            stackOfTags.pop()
-                                        } else {
-                                            addedTags += openTags[3]
-                                            stackOfTags.push(3)
-                                        }
-                                    }
-                                    else -> {
-                                        addedTags += openTags[4] + openTags[3]
-                                        stackOfTags.push(4)
-                                        stackOfTags.push(3)
-                                    }
-                                }
-                            }
-                        }
+                        result += rightTag(4)
+                        result += rightTag(3)
                     }
                 }
-                '~' -> {
-                    if (symbols != "~") {
-                        symbols += '~'
-                        continue
-                    } else {
-                        symbols = ""
-                        if (lastTag == 5) {
-                            addedTags += closeTags[5]
-                            stackOfTags.pop()
-                        } else {
-                            addedTags += openTags[5]
-                            stackOfTags.push(5)
-                        }
-                    }
+                "~~" -> {
+                    result += rightTag(5)
                 }
             }
         }
-        return addedTags
+        return result
     }
+
 
     htmlSB.appendLine(openTags[0] + openTags[1] + openTags[2])
     stackOfTags.push(0)
     stackOfTags.push(1)
-    isParagraphOpened = true
+    var isParagraphOpened = true
+
     for (i in lines.indices) {
         if (lines[i].trim().isEmpty()) {
             if (isParagraphOpened && (i > 0 && lines[i - 1].trim().isNotEmpty())) {
@@ -546,7 +494,6 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     }
     if (isParagraphOpened) {
         htmlSB.append(closeTags[2])
-        isParagraphOpened = false
     }
 
     htmlSB.append(closeTags[1] + closeTags[0])
